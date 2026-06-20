@@ -15,12 +15,12 @@ app.set('trust proxy', 1);
 const allowedOrigins = [
   'http://localhost:3000',
   'https://polytechnic-attendance-system2026.netlify.app',
+  'https://polyatted-system-frontend.vercel.app',
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, Postman, curl)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
