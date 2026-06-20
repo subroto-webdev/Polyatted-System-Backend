@@ -19,7 +19,14 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true);
+
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      origin.endsWith('.netlify.app');
+
+    if (isAllowed) {
       callback(null, true);
     } else {
       callback(new Error(`CORS blocked: ${origin}`));
@@ -46,7 +53,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/', limiter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ✅ MongoDB — serverless এর জন্য cached connection
 let isConnected = false;
 const connectDB = async () => {
   if (isConnected) return;
@@ -58,7 +64,6 @@ const connectDB = async () => {
   console.log('✅ MongoDB Connected');
 };
 
-// ✅ সব request এর আগে DB connect করো
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -69,7 +74,6 @@ app.use(async (req, res, next) => {
   }
 });
 
-// Routes
 app.use('/api/auth',        authLimiter, require('./routes/auth'));
 app.use('/api/users',       require('./routes/users'));
 app.use('/api/departments', require('./routes/departments'));
@@ -94,5 +98,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ✅ app.listen() সরানো হয়েছে — Vercel এ লাগে না
 module.exports = app;
