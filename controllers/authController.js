@@ -4,6 +4,7 @@ const Department = require('../models/Department');
 const QRCode = require('qrcode');
 const sendEmail = require('../utils/sendEmail');
 
+
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
 
 exports.login = async (req, res) => {
